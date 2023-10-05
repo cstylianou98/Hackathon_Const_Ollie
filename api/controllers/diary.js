@@ -1,9 +1,9 @@
-const Snack = require('../models/snack');
+const Diary = require('../models/Diary');
 
 async function index (req, res) {
     try {
-        const snacks = await Snack.getAll();
-        res.status(200).json(snacks);
+        const Diarys = await Diary.getAll();
+        res.status(200).json(Diarys);
     } catch (err) {
         res.status(500).json({error: err.message})
     }
@@ -12,8 +12,8 @@ async function index (req, res) {
 async function show (req, res) {
     try {
         const id = parseInt(req.params.snack_id);
-        const snack = await Snack.getOneById(id);
-        res.status(200).json(snack);
+        const Diary = await Snack.getOneById(id);
+        res.status(200).json(diary);
     } catch (err) {
         res.status(404).json({error: err.message})
     }
@@ -21,7 +21,7 @@ async function show (req, res) {
 
 async function getTop (req, res) {
     try {
-        const snack = await Snack.getTopSnack();
+        const Diary = await Diary.getTopSnack();
         res.status(200).json(snack);
     } catch (err) {
         res.status(404).json({error: err.message})
@@ -31,7 +31,7 @@ async function getTop (req, res) {
 async function create (req, res) {
     try {
         const data = req.body;
-        const newSnack = await Snack.create(data)
+        const newSnack = await Diary.create(data)
         res.status(201).json(newSnack);
     } catch (err) {
         res.status(404).json({error: err.message})
@@ -53,8 +53,8 @@ async function update (req, res) {
 async function destroy (req, res) {
     try {
         const id = parseInt(req.params.snack_id);
-        const snack = await Snack.getOneById(id);
-        const result = await snack.destroy();
+        const snack = await Diary.getOneById(id);
+        const result = await Diary.destroy();
         res.status(204).end();
     } catch (err) {
         res.status(404).json({error: err.message})

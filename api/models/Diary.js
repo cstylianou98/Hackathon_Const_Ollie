@@ -1,22 +1,21 @@
 const db = require("../database/connect")
 
-class Snack {
+class Diary {
 
-    constructor ({ snack_id, snack_name, snack_description, healthy, vegetarian, votes }) {
-        this.snack_id = snack_id;
-        this.snack_name = snack_name;
-        this.snack_description = snack_description;
-        this.healthy = healthy;
-        this.vegetarian = vegetarian;
-        this.votes = votes;
+    constructor ({ entry_id, text, category, date, time}) {
+        this.entry_id = entry_id;
+        this.text = text;
+        this.category = category;
+        this.date = date;
+        this.time = time;
     }
 
     static async getAll() {
-        const response = await db.query("SELECT * FROM snack;");
+        const response = await db.query("SELECT * FROM entry ORDER BY date;");
         if (response.rows.length === 0) {
-            throw new Error("No snacks available.")
+            throw new Error("No entries available.")
         }
-        return response.rows.map(s => new Snack(s));
+        return response.rows.map(e => new Diary(e));
     }
 
     static async getTopSnack() {
@@ -24,7 +23,7 @@ class Snack {
         if (response.rows.length === 0) {
             throw new Error("Voting has gone wrong")
         }
-        return response.rows.map(s => new Snack(s));
+        return response.rows.map(s => new Diary(s));
     }
 
     static async getOneById(id) {
@@ -64,4 +63,4 @@ class Snack {
     }
 }
 
-module.exports = Snack;
+module.exports = Diary;

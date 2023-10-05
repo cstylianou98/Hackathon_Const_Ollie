@@ -1,9 +1,10 @@
 const Diary = require('../models/Diary');
 
+
 async function index (req, res) {
     try {
-        const Diarys = await Diary.getAll();
-        res.status(200).json(Diarys);
+        const diaries = await Diary.getAll();
+        res.status(200).json(diaries);
     } catch (err) {
         res.status(500).json({error: err.message})
     }
@@ -11,28 +12,40 @@ async function index (req, res) {
 
 async function show (req, res) {
     try {
-        const id = parseInt(req.params.snack_id);
-        const Diary = await Snack.getOneById(id);
+        const id = parseInt(req.params.entry_id);
+        const diary = await Diary.getOneById(id);
         res.status(200).json(diary);
     } catch (err) {
         res.status(404).json({error: err.message})
     }
 }
 
-async function getTop (req, res) {
+async function showByCategory (req,res) {
     try {
-        const Diary = await Diary.getTopSnack();
-        res.status(200).json(snack);
+        const category = req.params.category;
+        const diary = await Diary.getOneByCategory(category);
+        res.status(200).json(diary);
     } catch (err) {
-        res.status(404).json({error: err.message})
+        res.status(404).json({error :err.message})
     }
 }
+
+async function showByDate (req,res) {
+    try {
+        const date = req.params.date;
+        const diary = await Diary.getOneByDate(date);
+        res.status(200).json(diary);
+    } catch (err) {
+        res.status(404).json({error :err.message})
+    }
+}
+
 
 async function create (req, res) {
     try {
         const data = req.body;
-        const newSnack = await Diary.create(data)
-        res.status(201).json(newSnack);
+        const newEntry = await Diary.create(data)
+        res.status(201).json(newEntry);
     } catch (err) {
         res.status(404).json({error: err.message})
     }
@@ -40,11 +53,11 @@ async function create (req, res) {
 
 async function update (req, res) {
     try {
-        const id = parseInt(req.params.snack_id);
-        const vote_val = parseInt(req.params.vote_val)
-        const snack = await Snack.getOneById(id);
-        const result = await snack.update(vote_val);
-        res.status(204).json(result);
+        const id = parseInt(req.params.entry_id);
+        const data = req.body;
+        const diary = await Diary.getOneById(id);
+        const result = await diary.update(data);
+        res.status(200).json(result);
     } catch (err) {
         res.status(400).json({error: err.message})
     }
@@ -52,13 +65,13 @@ async function update (req, res) {
 
 async function destroy (req, res) {
     try {
-        const id = parseInt(req.params.snack_id);
-        const snack = await Diary.getOneById(id);
-        const result = await Diary.destroy();
+        const id = parseInt(req.params.entry_id);
+        const diary = await Diary.getOneById(id);
+        const result = await diary.destroy();
         res.status(204).end();
     } catch (err) {
         res.status(404).json({error: err.message})
     }
 }
 
-module.exports = { index, getTop, show, create, update, destroy }
+module.exports = { index, show, showByCategory, showByDate, create, update, destroy }

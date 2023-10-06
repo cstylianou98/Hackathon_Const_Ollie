@@ -40,6 +40,16 @@ async function showByDate (req,res) {
     }
 }
 
+async function showByString (req,res) {
+    try {
+        const string = req.params.string;
+        const diary = await Diary.getOneByString(string);
+        res.status(200).json(diary);
+    } catch (err) {
+        res.status(404).json({error :err.message})
+    }
+}
+
 
 async function create (req, res) {
     try {
@@ -74,4 +84,4 @@ async function destroy (req, res) {
     }
 }
 
-module.exports = { index, show, showByCategory, showByDate, create, update, destroy }
+module.exports = { index, show, showByCategory, showByDate, showByString, create, update, destroy }

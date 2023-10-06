@@ -49,10 +49,20 @@ class Diary {
     return new Diary(response.rows[0]);
   }
 
-  static async create(data) { //need to make time automatic
+  static async getOneByString(string) {//check this
+    const response = await db.query("SELECT * FROM entry WHERE text LIKE '%$1%'", [
+      string
+    ]);
+    if (response.rows.length === 0) {
+      throw new Error("Unable to locate entry.");
+    }
+    return response.rows.map((e) => new Diary(e)); 
+  }
+
+  static async create(data) { //check time and date are working
     const { text, category, date, time } = data;
     const response = await db.query(
-      "INSERT INTO entry (text, category, date, time) VALUES ($1, $2, DATE(CURRENT_TIMESTAMP), '14:00:00') RETURNING *;",
+      "INSERT INTO entry (text, category, date, time) VALUES ($1, $2, CAST(CURRENT_TIMESTAMP AS DATE), CAST(CURRENT_TIMESTAMP AS TIME);) RETURNING *;",
       [text, category]
     );
     const entryId = response.rows[0].entry_id;
@@ -60,9 +70,9 @@ class Diary {
     return new Diary(newEntry);
   }
 
-  async update(data) { //need to get date and time to update too
+  async update(data) { //check time and date are working
     const newText = data.text;
-    const response = await db.query("UPDATE entry SET text = $1 WHERE entry_id = $2 RETURNING *;", [newText, this.entry_id])
+    const response = await db.query("UPDATE entry SET text = $1, date=CAST(CURRENT_TIMESTAMP AS DATE), time=CAST(CURRENT_TIMESTAMP AS TIME) WHERE entry_id = $2 RETURNING *;", [newText, this.entry_id])
     if (response.rows.length != 1){
        throw new Error("Unable to update votes.")
     }

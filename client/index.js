@@ -64,17 +64,6 @@ const updateEntry = (id) => {
   newForm.appendChild(updateText);
   newForm.appendChild(submitUpdate);
 
-//   const data = {
-//     text: updateText.value,
-//   };
-
-//   const options = {
-//     method: "PATCH",
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//     body: JSON.stringify(data),
-//   };
 
   submitUpdate.addEventListener("click", async (e) => {
     e.preventDefault();
@@ -96,39 +85,6 @@ const updateEntry = (id) => {
 
   });
 };
-
-//   showOneCountry = async (name) => {
-//     const response = await fetch(`http://localhost:3003/countries/${name}`);
-//     const data = await response.json();
-//     const body = document.querySelector('body')
-//     const para = document.createElement("p");
-//     para.setAttribute("id", name)
-//     para.innerHTML = `The capital of ${data.name} is ${data.capital}. ${data.name} has a population of ${data.population} people and the official language(s) of ${data.name} is/are ${data.languages}.`;
-//     body.appendChild(para);
-//     const deleteBtn = document.createElement("button")
-//     deleteBtn.innerHTML = "delete"
-//     deleteBtn.classList.add("deleteBtn")
-//     para.appendChild(deleteBtn)
-
-//     deleteBtns = document.querySelectorAll(".deleteBtn");
-//     for (let i = 0; i < deleteBtns.length; i++) {
-//       deleteBtns[i].addEventListener("click", () => {
-//         deleteBtns[i].parentElement.remove()
-//       })
-//     }
-
-//     const dbDeleteBtn = document.createElement("button")
-//     dbDeleteBtn.innerHTML = "delete for good"
-//     dbDeleteBtn.classList.add("dbDeleteBtn")
-//     para.appendChild(dbDeleteBtn)
-
-//     dbDeleteBtn.addEventListener("click", ()=> {
-//       deleteCountry(dbDeleteBtn.parentElement.id)
-//       dbDeleteBtn.parentElement.remove()
-//     })
-
-//
-//   }
 
 const createEntry = () => {
   document
@@ -158,5 +114,48 @@ const createEntry = () => {
     });
 };
 
+const search = () => {
+  document
+    .getElementById("searchEntry")
+    .addEventListener("submit", async (e) => {
+      e.preventDefault();
+      let searchText = document.querySelector("#searchText").value;
+      
+
+      const response = await fetch(`http://localhost:3000/entries/category/${searchText}`)
+      const entries = await response.json();
+
+      const results = document.createElement("div");
+      const searchResults = document.querySelector("#searchResults")
+      searchResults.appendChild(results);
+
+      for (let i = 0; i < entries.length; i++) {
+        entry = document.createElement("div"); //could change to links later
+     
+        entryText = document.createElement("p");
+        entryText.innerHTML = entries[i].text;
+    
+        entryCategory = document.createElement("p");
+        entryCategory.innerHTML = entries[i].category;
+    
+        entryDateTime = document.createElement("p");
+    
+        entryDateTime.innerHTML =
+          entries[i].date.substring(0, 10) + " " + entries[i].time.substring(0, 5);
+    
+        entry.appendChild(entryText);
+        entry.appendChild(entryCategory);
+        entry.appendChild(entryDateTime);
+    
+        results.appendChild(entry);
+
+    }
+  }
+    )
+}
+
+
+
 showEntries();
 createEntry();
+search();

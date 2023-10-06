@@ -33,10 +33,11 @@ class Diary {
       "SELECT * FROM entry WHERE LOWER(category) = $1",
       [categoryName.toLowerCase()]
     );
-    if (response.rows.length != 1) {
+    if (response.rows.length === 0) {
       throw new Error("Unable to locate entry.");
     }
-    return new Diary(response.rows[0]);
+    // return new Diary(response.rows[0])
+    return response.rows.map((e) => new Diary(e))
   }
 
   static async getOneByDate(date) {

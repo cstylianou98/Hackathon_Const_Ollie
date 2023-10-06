@@ -10,7 +10,7 @@ class Diary {
   }
 
   static async getAll() {
-    const response = await db.query("SELECT * FROM entry ORDER BY date;");
+    const response = await db.query("SELECT * FROM entry ORDER BY date DESC, time DESC;");
     if (response.rows.length === 0) {
       throw new Error("No entries available.");
     }
@@ -50,19 +50,22 @@ class Diary {
   }
 
   static async getOneByString(string) {//check this
-    const response = await db.query("SELECT * FROM entry WHERE text LIKE '%$1%'", [
-      string
+    const str = `%${string}%`;
+    const response = await db.query("SELECT * FROM entry WHERE text LIKE $1 ORDER BY date DESC, time DESC;", [
+      str
     ]);
+
+    // const response = await db.query("SELECT * FROM entry WHERE text LIKE ?", [`%${string}%`]);
     if (response.rows.length === 0) {
       throw new Error("Unable to locate entry.");
     }
-    return response.rows.map((e) => new Diary(e)); 
+    return response.rows[0];  //only gets first
   }
 
   static async create(data) { //check time and date are working
-    const { text, category, date, time } = data;
+    const { text, category } = data;
     const response = await db.query(
-      "INSERT INTO entry (text, category, date, time) VALUES ($1, $2, CAST(CURRENT_TIMESTAMP AS DATE), CAST(CURRENT_TIMESTAMP AS TIME);) RETURNING *;",
+      "INSERT INTO entry (text, category, date, time) VALUES ($1, $2, CAST(CURRENT_TIMESTAMP AS DATE), CAST(CURRENT_TIMESTAMP AS TIME)) RETURNING *;",
       [text, category]
     );
     const entryId = response.rows[0].entry_id;
